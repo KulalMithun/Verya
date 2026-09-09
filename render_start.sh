@@ -84,16 +84,15 @@ if [ "$INVENTREE_DB_ENGINE" = "sqlite3" ] && [ ! -f "$DATA_DIR/inventree.sqlite3
     fi
 fi
 
-# Initialize static assets from pre-built template
-if [ ! -d "$DATA_DIR/static/web" ]; then
-    if [ -d "$APP_DIR/contrib/template_data/static" ]; then
-        echo "[*] Copying pre-built static assets from template..."
-        cp -r "$APP_DIR/contrib/template_data/static/." "$DATA_DIR/static/"
-    else
-        echo "[*] Collecting static files..."
-        python src/backend/InvenTree/manage.py collectstatic --no-input
-    fi
+# Always sync fresh static assets to persistent disk on every deployment
+echo "[*] Syncing latest static assets from container build to persistent disk..."
+rm -rf "$DATA_DIR/static/web"
+if [ -d "$APP_DIR/contrib/template_data/static" ]; then
+    echo "[*] Copying fresh static assets from build template..."
+    cp -rf "$APP_DIR/contrib/template_data/static/." "$DATA_DIR/static/"
 fi
+echo "[*] Ensuring all static files are fully collected..."
+python src/backend/InvenTree/manage.py collectstatic --no-input
 
 # 1. Run database migrations (instant check if template was unpacked)
 echo "[*] Checking database migrations..."
