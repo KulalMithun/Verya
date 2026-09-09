@@ -74,18 +74,35 @@ else
     export INVENTREE_DB_NAME="$DATA_DIR/inventree.sqlite3"
 fi
 
-# 1. Run database migrations
-echo "[*] Running database migrations..."
+# Fast initialization from pre-migrated, pre-seeded SQLite template
+if [ "$INVENTREE_DB_ENGINE" = "sqlite3" ] && [ ! -f "$DATA_DIR/inventree.sqlite3" ]; then
+    if [ -f "$APP_DIR/contrib/template_data/inventree_template.sqlite3.gz" ]; then
+        echo "[*] Unpacking pre-migrated, pre-seeded SQLite database template..."
+        gzip -dc "$APP_DIR/contrib/template_data/inventree_template.sqlite3.gz" > "$DATA_DIR/inventree.sqlite3"
+        chmod 664 "$DATA_DIR/inventree.sqlite3"
+        echo "[*] SQLite database template unpacked successfully."
+    fi
+fi
+
+# Initialize static assets from pre-built template
+if [ ! -d "$DATA_DIR/static/web" ]; then
+    if [ -d "$APP_DIR/contrib/template_data/static" ]; then
+        echo "[*] Copying pre-built static assets from template..."
+        cp -r "$APP_DIR/contrib/template_data/static/." "$DATA_DIR/static/"
+    else
+        echo "[*] Collecting static files..."
+        python src/backend/InvenTree/manage.py collectstatic --no-input
+    fi
+fi
+
+# 1. Run database migrations (instant check if template was unpacked)
+echo "[*] Checking database migrations..."
 python src/backend/InvenTree/manage.py migrate --no-input
 
-# 2. Collect static files
-echo "[*] Collecting static files..."
-python src/backend/InvenTree/manage.py collectstatic --no-input
-
-# 3. Seed OpenWES demo data and client evaluation user accounts
-echo "[*] Ensuring OpenWES demo data and client accounts are seeded..."
+# 2. Seed OpenWES demo data and client evaluation user accounts
+echo "[*] Ensuring OpenWES demo data and client accounts are verified..."
 python src/backend/InvenTree/manage.py seed_openwes_demo || true
-python src/backend/InvenTree/manage.py seed_demo_users
+python src/backend/InvenTree/manage.py seed_demo_users || true
 
 echo "======================================================================"
 echo "[*] Starting Veyra Gunicorn server on 0.0.0.0:$PORT..."

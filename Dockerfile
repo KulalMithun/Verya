@@ -59,9 +59,14 @@ COPY . .
 # Copy compiled React frontend bundle from Stage 1
 COPY --from=frontend_builder /build/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
 
-# Ensure scripts have execution permissions and directories are initialized
+# Ensure scripts have execution permissions, directories are initialized, and pre-collect static assets at build time
 RUN chmod +x ./render_start.sh ./render_build.sh && \
-    mkdir -p ${INVENTREE_DATA_DIR}/static ${INVENTREE_DATA_DIR}/media ${INVENTREE_DATA_DIR}/backup ${INVENTREE_DATA_DIR}/plugins
+    mkdir -p ${INVENTREE_DATA_DIR}/static ${INVENTREE_DATA_DIR}/media ${INVENTREE_DATA_DIR}/backup ${INVENTREE_DATA_DIR}/plugins /home/inventree/contrib/template_data/static && \
+    INVENTREE_STATIC_ROOT="/home/inventree/contrib/template_data/static" \
+    INVENTREE_DB_ENGINE="sqlite3" \
+    INVENTREE_DB_NAME="/tmp/build.sqlite3" \
+    python src/backend/InvenTree/manage.py collectstatic --no-input && \
+    rm -f /tmp/build.sqlite3
 
 EXPOSE ${PORT}
 
