@@ -28,6 +28,9 @@ ENV PYTHONUNBUFFERED=1 \
     INVENTREE_BACKUP_DIR="/home/inventree/data/backup" \
     INVENTREE_PLUGIN_DIR="/home/inventree/data/plugins" \
     INVENTREE_PLUGIN_FILE="/home/inventree/data/plugins.txt" \
+    INVENTREE_SITE_URL="http://localhost:10000" \
+    INVENTREE_TRUSTED_ORIGINS="http://localhost:10000,http://127.0.0.1:10000" \
+    INVENTREE_SECRET_KEY="veyra-insecure-build-secret-key-change-me" \
     PORT=10000
 
 # Install system dependencies (including database clients, fonts, graphics libraries)
@@ -66,7 +69,7 @@ RUN chmod +x ./render_start.sh ./render_build.sh && \
     INVENTREE_DB_ENGINE="sqlite3" \
     INVENTREE_DB_NAME="/tmp/build.sqlite3" \
     python src/backend/InvenTree/manage.py collectstatic --no-input && \
-    rm -f /tmp/build.sqlite3
+    rm -rf /tmp/build.sqlite3 /home/inventree/data/*
 
 EXPOSE ${PORT}
 
