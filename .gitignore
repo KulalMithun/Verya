@@ -17,10 +17,9 @@ ENV/
 inventree-env/
 pyvenv.cfg
 
-# --- Build, Packaging & PyInstaller ---
-build/
-./build/
-dist/
+# --- Build, Packaging & PyInstaller (Root Only) ---
+/build/
+/dist/
 *.spec
 *.egg-info/
 develop-eggs/
@@ -28,15 +27,20 @@ develop-eggs/
 eggs/
 *.egg
 .installed.cfg
-sdist/
-var/
+/sdist/
+/var/
 /bin/
 /lib/
 /lib64/
-!src/frontend/lib/
-share/
-downloads/
+/share/
+/downloads/
 .cache/
+
+# Explicitly ensure source code directories are NEVER ignored
+!src/frontend/lib/
+!src/frontend/src/pages/build/
+!src/frontend/src/tables/build/
+!src/backend/InvenTree/build/
 
 # --- Local Databases & Persistent Data ---
 data/
