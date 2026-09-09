@@ -10,7 +10,7 @@ COPY src/frontend/package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY src/frontend/ ./
-RUN npm run build
+RUN npm run compile && npm run build
 
 
 # --- Stage 2: Python Backend & Gunicorn Server ---

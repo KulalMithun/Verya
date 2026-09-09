@@ -7,11 +7,18 @@ import { useStoredTableState } from '@lib/states/StoredTableState';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../App';
 import { markLocaleReady } from '../functions/localeReady';
+import { messages as defaultEnglishMessages } from '../locales/en/messages';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
 
 export const defaultLocale = 'en';
+
+// Immediately preload default English messages so all components render proper labels from frame 0
+i18n.load('en', defaultEnglishMessages);
+i18n.load('en-us', defaultEnglishMessages);
+i18n.load('en_US', defaultEnglishMessages);
+i18n.activate('en');
 
 /*
  * Function which returns a record of supported languages.
@@ -161,11 +168,11 @@ export function LanguageContext({
     };
   }, [language]);
 
-  return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
-
-  // only render the i18n Provider if the locales are fully activated, otherwise we end
-  // up with an error in the browser console
-  return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
+  return (
+    <I18nProvider i18n={i18n} key={activeLocale || language || 'en'}>
+      {children}
+    </I18nProvider>
+  );
 }
 
 // This function is used to determine the locale to activate based on the prioritization rules.
@@ -183,6 +190,19 @@ export async function activateLocale(locale: string | null) {
     locale = getPriorityLocale();
   }
 
+  // Ensure default English messages are always present in the dictionary
+  if (!i18n.messages.en) {
+    i18n.load('en', defaultEnglishMessages);
+    i18n.load('en-us', defaultEnglishMessages);
+    i18n.load('en_US', defaultEnglishMessages);
+  }
+
+  if (locale === 'en' || locale === 'en-us' || locale === 'en_US') {
+    i18n.activate('en');
+    markLocaleReady();
+    return;
+  }
+
   const localeDir = locale.split('-')[0];
   const targetPath = `../locales/${localeDir}/messages.ts`;
   const defaultPath = '../locales/en/messages.ts';
@@ -195,13 +215,11 @@ export async function activateLocale(locale: string | null) {
       i18n.load(locale, messages);
       i18n.activate(locale);
     } else {
-      i18n.load(locale, {});
-      i18n.activate(locale);
+      i18n.activate('en');
     }
   } catch (err) {
-    console.warn(`Failed to load locale ${locale}:`, err);
-    i18n.load(locale, {});
-    i18n.activate(locale);
+    console.warn(`Failed to load locale ${locale}, falling back to English:`, err);
+    i18n.activate('en');
   } finally {
     markLocaleReady();
   }
