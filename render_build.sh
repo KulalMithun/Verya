@@ -19,7 +19,7 @@ pip install gunicorn psycopg2-binary
 if command -v npm &> /dev/null; then
     echo "[*] Building React SPA frontend with npm..."
     cd src/frontend
-    npm install
+    npm install --legacy-peer-deps
     npm run build
     cd ../..
     echo "[*] Frontend assets built successfully."

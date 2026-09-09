@@ -7,7 +7,7 @@ FROM node:20-slim AS frontend_builder
 
 WORKDIR /build/src/frontend
 COPY src/frontend/package*.json ./
-RUN npm ci --prefer-offline || npm install
+RUN npm install --legacy-peer-deps
 
 COPY src/frontend/ ./
 RUN npm run build
