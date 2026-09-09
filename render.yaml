@@ -1,0 +1,28 @@
+# ======================================================================
+# Veyra - Render Cloud Infrastructure Blueprint
+# ======================================================================
+# Deploy directly to Render with Blueprints:
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: veyra
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/
+    autoDeploy: true
+    envVars:
+      - key: INVENTREE_DEBUG
+        value: "False"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PORT
+        value: "10000"
+      - key: INVENTREE_WEB_PORT
+        value: "10000"
+    disk:
+      name: veyra-data
+      mountPath: /home/inventree/data
+      sizeGB: 10
