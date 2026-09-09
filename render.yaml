@@ -22,6 +22,8 @@ services:
         value: "10000"
       - key: INVENTREE_WEB_PORT
         value: "10000"
+      - key: INVENTREE_BACKUP_DIR
+        value: "/home/inventree/data/backup"
     disk:
       name: veyra-data
       mountPath: /home/inventree/data

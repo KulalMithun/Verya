@@ -23,6 +23,11 @@ ENV PYTHONUNBUFFERED=1 \
     INVENTREE_DOCKER="true" \
     INVENTREE_HOME="/home/inventree" \
     INVENTREE_DATA_DIR="/home/inventree/data" \
+    INVENTREE_STATIC_ROOT="/home/inventree/data/static" \
+    INVENTREE_MEDIA_ROOT="/home/inventree/data/media" \
+    INVENTREE_BACKUP_DIR="/home/inventree/data/backup" \
+    INVENTREE_PLUGIN_DIR="/home/inventree/data/plugins" \
+    INVENTREE_PLUGIN_FILE="/home/inventree/data/plugins.txt" \
     PORT=10000
 
 # Install system dependencies (including database clients, fonts, graphics libraries)
@@ -56,7 +61,7 @@ COPY --from=frontend_builder /build/src/backend/InvenTree/web/static/web ./src/b
 
 # Ensure scripts have execution permissions and directories are initialized
 RUN chmod +x ./render_start.sh ./render_build.sh && \
-    mkdir -p ${INVENTREE_DATA_DIR}/static ${INVENTREE_DATA_DIR}/media ${INVENTREE_DATA_DIR}/backup
+    mkdir -p ${INVENTREE_DATA_DIR}/static ${INVENTREE_DATA_DIR}/media ${INVENTREE_DATA_DIR}/backup ${INVENTREE_DATA_DIR}/plugins
 
 EXPOSE ${PORT}
 

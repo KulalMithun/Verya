@@ -15,7 +15,7 @@ cd "$APP_DIR"
 
 # Persistent or local data directory
 DATA_DIR="${INVENTREE_DATA_DIR:-$APP_DIR/data}"
-mkdir -p "$DATA_DIR/static" "$DATA_DIR/media" "$DATA_DIR/backup"
+mkdir -p "$DATA_DIR/static" "$DATA_DIR/media" "$DATA_DIR/backup" "$DATA_DIR/plugins"
 
 # Ensure config file exists
 if [ ! -f "$DATA_DIR/config.yaml" ]; then
@@ -30,6 +30,9 @@ fi
 
 export INVENTREE_STATIC_ROOT="${DATA_DIR}/static"
 export INVENTREE_MEDIA_ROOT="${DATA_DIR}/media"
+export INVENTREE_BACKUP_DIR="${DATA_DIR}/backup"
+export INVENTREE_PLUGIN_DIR="${DATA_DIR}/plugins"
+export INVENTREE_PLUGIN_FILE="${DATA_DIR}/plugins.txt"
 export INVENTREE_CONFIG_FILE="${DATA_DIR}/config.yaml"
 
 # Render URL & Hostname Auto-Configuration
@@ -52,20 +55,19 @@ fi
 # Database Auto-Detection (PostgreSQL vs SQLite)
 if [ -n "$DATABASE_URL" ]; then
     echo "[*] Production PostgreSQL DATABASE_URL detected. Configuring database parameters..."
-    python3 - << 'EOF'
-import os
-import urllib.parse
-
+    eval "$(python3 - << 'EOF'
+import os, urllib.parse
 db_url = os.environ.get('DATABASE_URL', '')
 if db_url.startswith('postgres://') or db_url.startswith('postgresql://'):
     parsed = urllib.parse.urlparse(db_url)
-    os.environ['INVENTREE_DB_ENGINE'] = 'postgresql'
-    os.environ['INVENTREE_DB_NAME'] = parsed.path.lstrip('/')
-    os.environ['INVENTREE_DB_USER'] = parsed.username or ''
-    os.environ['INVENTREE_DB_PASSWORD'] = parsed.password or ''
-    os.environ['INVENTREE_DB_HOST'] = parsed.hostname or ''
-    os.environ['INVENTREE_DB_PORT'] = str(parsed.port or 5432)
+    print("export INVENTREE_DB_ENGINE='postgresql'")
+    print(f"export INVENTREE_DB_NAME='{parsed.path.lstrip('/')}'")
+    print(f"export INVENTREE_DB_USER='{parsed.username or ''}'")
+    print(f"export INVENTREE_DB_PASSWORD='{parsed.password or ''}'")
+    print(f"export INVENTREE_DB_HOST='{parsed.hostname or ''}'")
+    print(f"export INVENTREE_DB_PORT='{str(parsed.port or 5432)}'")
 EOF
+)"
 else
     echo "[*] Using persistent SQLite database at: $DATA_DIR/inventree.sqlite3"
     export INVENTREE_DB_ENGINE="sqlite3"
