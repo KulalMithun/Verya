@@ -11,6 +11,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import * as LinguiCore from '@lingui/core';
+import { i18n } from '@lingui/core';
 import * as LinguiReact from '@lingui/react';
 // Global types to be exported for use in plugins
 import * as MantineCore from '@mantine/core';
@@ -19,7 +20,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
+import { messages as defaultEnglishMessages } from './locales/en/messages';
 import './styles/overrides.css';
+
+// Immediately preload English translations at application root entrypoint
+i18n.load('en', defaultEnglishMessages);
+i18n.load('en-us', defaultEnglishMessages);
+i18n.load('en_US', defaultEnglishMessages);
+i18n.activate('en');
 
 import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
