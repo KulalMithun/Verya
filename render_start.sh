@@ -74,13 +74,13 @@ else
     export INVENTREE_DB_NAME="$DATA_DIR/inventree.sqlite3"
 fi
 
-# Fast initialization from pre-migrated, pre-seeded SQLite template
+# Fast initialization from clean pre-migrated SQLite template
 if [ "$INVENTREE_DB_ENGINE" = "sqlite3" ] && [ ! -f "$DATA_DIR/inventree.sqlite3" ]; then
     if [ -f "$APP_DIR/contrib/template_data/inventree_template.sqlite3.gz" ]; then
-        echo "[*] Unpacking pre-migrated, pre-seeded SQLite database template..."
+        echo "[*] Unpacking clean SQLite database template..."
         gzip -dc "$APP_DIR/contrib/template_data/inventree_template.sqlite3.gz" > "$DATA_DIR/inventree.sqlite3"
         chmod 664 "$DATA_DIR/inventree.sqlite3"
-        echo "[*] SQLite database template unpacked successfully."
+        echo "[*] Clean SQLite database template unpacked successfully."
     fi
 fi
 
@@ -94,14 +94,9 @@ fi
 echo "[*] Ensuring all static files are fully collected..."
 python src/backend/InvenTree/manage.py collectstatic --no-input
 
-# 1. Run database migrations (instant check if template was unpacked)
+# Run database migrations
 echo "[*] Checking database migrations..."
 python src/backend/InvenTree/manage.py migrate --no-input
-
-# 2. Seed OpenWES demo data and client evaluation user accounts
-echo "[*] Ensuring OpenWES demo data and client accounts are verified..."
-python src/backend/InvenTree/manage.py seed_openwes_demo || true
-python src/backend/InvenTree/manage.py seed_demo_users || true
 
 echo "======================================================================"
 echo "[*] Starting Veyra Gunicorn server on 0.0.0.0:$PORT..."

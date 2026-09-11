@@ -125,20 +125,16 @@ Veyra is ready for 1-click cloud deployment on [Render](https://render.com/) or 
 
 ---
 
-## 🔑 Client Demo Accounts & Credentials
+## 🔑 Initial Administrator Access
 
-Upon launch or deployment, Veyra automatically seeds realistic demo data and client evaluation user accounts:
+When Veyra is initialized for the first time, it starts completely fresh and brand new without dummy data. Use the default system administrator credentials to sign in and begin configuring your warehouse:
 
-| Role | Username | Password | Purpose & Workflow |
+| Role | Username | Default Password | Description |
 | :--- | :--- | :--- | :--- |
-| **System Administrator** | `admin` | `admin123` | Full system superuser control, configuration, audit logs |
-| **Warehouse Manager** | `manager` | `demo123` | Full operational control (Stock, Parts, Orders, Waves) |
-| **Floor Supervisor** | `supervisor` | `demo123` | Live zone heatmap, task dispatching & exception resolution |
-| **Scanner / HUD Operator** | `operator` | `demo123` | Zone A handheld scanner HUD & pick execution |
-| **Client Evaluation Demo** | `demo` | `demo123` | Read-only evaluation account |
-| **Senior Picker (Zone A)** | `op_rajesh` | `demo123` | Fast-pick electronics aisle & barcode scanning |
-| **Voice Picking Operator** | `op_priya` | `demo123` | Hands-free voice-directed headset workflow |
-| **Bulk Pallet Supervisor** | `op_deepa` | `demo123` | Pallet reserve replenishment & heavy stock |
+| **System Administrator** | `admin` | `admin123` | Full superuser access to create users, configure zones, and manage inventory |
+
+> [!TIP]
+> All user data, inventory, zones, and tasks persist permanently in the database (`data/inventree.sqlite3` or PostgreSQL). Your data is automatically retained across all restarts and deployments.
 
 ---
 
@@ -242,13 +238,7 @@ source .venv/bin/activate
 # 2. Run database migrations
 python src/backend/InvenTree/manage.py migrate
 
-# 3. Seed demo warehouse data (zones, bins, operators, tasks)
-python src/backend/InvenTree/manage.py seed_openwes_demo
-
-# 4. (Optional) Run automated E2E test suite
-python src/backend/InvenTree/manage.py test_openwes_e2e
-
-# 5. Start the backend server
+# 3. Start the backend server
 python src/backend/InvenTree/manage.py runserver 0.0.0.0:8000
 ```
 

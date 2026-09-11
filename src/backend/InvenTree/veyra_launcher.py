@@ -102,12 +102,8 @@ def print_banner(host: str = 'localhost', port: int = 8000):
   - Supervisor:   http://{host}:{port}/openwes/supervisor
   - Backend API:  http://{host}:{port}/api/openwes/
 ----------------------------------------------------------------------
-  Demo Credentials:
-  - Admin (Superuser):  admin / admin123
-  - Operations Lead:    manager / demo123
-  - Supervisor:         supervisor / demo123
-  - Scanner Operator:   operator / demo123
-  - Demo Evaluation:    demo / demo123
+  Administrator Access:
+  - Default Admin: admin / admin123 (configure upon setup)
 ======================================================================
 [*] Server is running on port {port}. Press Ctrl+C to exit.
 """
@@ -154,11 +150,6 @@ def main():
         print('[*] Database migrations up to date.')
     except Exception as e:
         print(f'[!] Migration warning: {e}')
-
-    try:
-        call_command('seed_demo_users')
-    except Exception:
-        pass
 
     port = args.port
     host = args.host

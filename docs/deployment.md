@@ -219,21 +219,14 @@ Veyra includes native, zero-configuration support for deploying directly to [Ren
 
 ---
 
-## 5. Client Demo Accounts & Credentials
+## 5. Administrator Access & Persistence
 
-Upon deployment or startup, Veyra automatically runs `seed_demo_users` to create pre-configured client accounts:
+When Veyra starts for the first time, it initializes a brand new, clean database with no dummy records. 
 
-| Username | Password | Role & Access Level | Description |
+| Username | Default Password | Role & Access Level | Description |
 | :--- | :--- | :--- | :--- |
-| **`admin`** | `admin123` | **Full Superuser** | Complete administrative control over system & plugins |
-| **`manager`** | `demo123` | **Warehouse Operations Manager** | Full access to Parts, Stock, Orders, Waves, and Settings |
-| **`supervisor`** | `demo123` | **Shift Floor Supervisor** | Supervision, wave dispatching, exception resolution |
-| **`operator`** | `demo123` | **Handheld Scanner / HUD Operator** | Zone A picker operator with mobile HUD interface |
-| **`demo`** | `demo123` | **Client Evaluation Demo** | Read-only evaluation account |
-| **`op_rajesh`** | `demo123` | **Senior Picker (Zone A)** | Fast-moving electronics picking simulation |
-| **`op_priya`** | `demo123` | **Voice Picking Operator** | Hands-free voice directed picking demonstration |
-| **`op_deepa`** | `demo123` | **Pallet Supervisor (Zone D)** | Bulk reserve pallet replenishment |
+| **`admin`** | `admin123` | **Full Superuser** | Complete administrative control over system & warehouse operations |
 
 > [!NOTE]
-> All passwords can be customized anytime by running `python manage.py seed_demo_users --admin-password <newpass> --demo-password <newpass>`.
+> Database records are persisted in the configured persistent disk volume (`/home/inventree/data` on Docker/Render or external PostgreSQL). Whenever you restart or deploy, your existing data is fully preserved.
 
